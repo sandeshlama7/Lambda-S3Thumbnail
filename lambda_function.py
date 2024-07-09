@@ -18,11 +18,10 @@ def lambda_handler(event, context):
     key = unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
 
     s3_target = "thumbnail-invokelambda-sandesh"
-    key_target = key + "-thumbnail"
+    key_target = "thumbnails/" + key
     try:
         response = s3.get_object(Bucket=bucket, Key=key)
         upload_image = response['Body'].read()
-        print("CONTENT TYPE: " + response['ContentType'])
 
         image = Image.open(BytesIO(upload_image))
         image.thumbnail((1280, 720))
@@ -37,7 +36,6 @@ def lambda_handler(event, context):
             Body= thumbnail_buffer,
             ContentType= 'image/jpg'
             )
-
 
     except Exception as e:
         print(e)
